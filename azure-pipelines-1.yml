@@ -5,7 +5,7 @@
 trigger:
 - main
 pool:
-  default
+  mydockeragent
 
 resources:
 - repo: self
@@ -20,7 +20,7 @@ stages:
   - job: Build
     displayName: Build
     pool:
-      default
+      mydockeragent
     steps:
     - task: Docker@2
       displayName: Build an image

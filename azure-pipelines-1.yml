@@ -5,27 +5,27 @@
 trigger:
 - main
 pool:
-  Default
-
-resources:
-- repo: self
-
-variables:
-  tag: '$(Build.BuildId)'
-
-stages:
-- stage: Build
-  displayName: Build image
-  jobs:
-  - job: Build
-    displayName: Build
-    pool:
-      Default
-    steps:
-    - task: Docker@2
-      displayName: Build an image
-      inputs:
-        command: build
-        dockerfile: '$(Build.SourcesDirectory)/jenkins/currency-exchange-microservice/Dockerfile'
-        tags: |
-          $(tag)
+  default
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '10.x'
+  displayName: 'Install Node.js'
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
+    script: 'npm install'
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
+    script: 'npm run build.azure'
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(System.DefaultWorkingDirectory)/build'
+    Contents: '**'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'quizapp'
+    publishLocation: 'Container'
